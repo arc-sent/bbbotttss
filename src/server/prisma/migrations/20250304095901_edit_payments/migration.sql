@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Payments" ALTER COLUMN "telegramId" SET DATA TYPE TEXT,
+ALTER COLUMN "providerId" DROP NOT NULL,
+ALTER COLUMN "providerId" SET DATA TYPE TEXT;
+
+-- AlterTable
+ALTER TABLE "UserBot" ALTER COLUMN "location" SET DEFAULT ST_SetSRID(ST_MakePoint(0, 0), 4326);

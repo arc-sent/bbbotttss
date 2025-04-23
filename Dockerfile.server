@@ -1,0 +1,16 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+RUN npm install typescript
+
+COPY . .
+
+RUN npm run build
+
+CMD ["sh", "-c", "cd src/server && npx prisma migrate deploy && npm run server:docker"]
+
+# CMD ["npm" , "run" , "server:docker"]

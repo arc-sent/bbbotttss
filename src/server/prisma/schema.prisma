@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "windows", "debian-openssl-3.0.x" , "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PaymentType {
+  PREMIUM
+  GEMS
+}
+
+model UserBot {
+  idPrisma  Int @id @default(autoincrement())
+  name      String
+  city      String
+  lat Float
+  long Float
+  age        Int
+  gender Boolean @default(false)
+  searchGender Boolean @default(true)
+  minAge        Int @default(0)
+  maxAge        Int @default(99) 
+  id        String @unique
+  description  String
+  photo     String @default("")
+  like      Int @default(0)
+  likeWieved Boolean @default(true)
+  dislike   Int @default(0)
+  dislikeWieved Boolean @default(true)
+  coin Int @default(0)
+  coinWieved Boolean @default(true)
+  pendingProfiles PandigProfile[]
+  metching MetchProfile[]
+  location Unsupported("GEOGRAPHY(Point, 4326)") @default(dbgenerated("ST_SetSRID(ST_MakePoint(0, 0), 4326)"))
+  role String @default("user")
+  top Int @default(0)
+  caseBronza Int @default(0)
+  caseSilver Int @default(0)
+  caseGold Int @default(0)
+  casePlatinum Int @default(0)
+  caseEveryDay Int @default(0)
+  caseMystery Int @default(0)
+  reported Int @default(0)
+  banned Boolean @default(false)
+  bannedTime DateTime?
+  premium Boolean @default(false)
+  premiumTime  DateTime?
+  payments Payments[]
+  shutdown Boolean @default(false)
+  viewed ViewedProfile[]
+}
+
+model Payments {
+  invoice_payload Int @id @default(autoincrement())
+  amountStar Int
+  telegramId String?
+  providerId String?
+  status String @default("pending")
+  userId String
+  user UserBot @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+  type PaymentType @default(PREMIUM)
+}
+
+model PandigProfile {
+  idPrisma  Int @id @default(autoincrement())
+  message   String @default("")
+  coins     Int @default(0)
+  fromId    String?   
+  userId    String
+  user      UserBot @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model MetchProfile {
+  idPrisma  Int     @id @default(autoincrement())
+  message   String  @default("")
+  fromId    String?
+  userId    String
+  createdAt DateTime @default(now())
+  
+  user      UserBot @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Chanels {
+  id Int @id @default(autoincrement())
+  nickname String @unique
+}
+
+model Advertisement {
+  id Int @id @default(autoincrement())
+  photo String
+  text String
+  link String
+  due  DateTime @default(dbgenerated("(NOW() + INTERVAL '1 day')"))
+}
+
+
+model ViewedProfile {
+  id          Int      @id @default(autoincrement())
+  userId      String   
+  viewedId    String   
+  user        UserBot  @relation(fields: [userId], references: [id])
+}
+
+

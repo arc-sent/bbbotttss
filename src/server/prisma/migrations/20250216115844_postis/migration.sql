@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "UserBot" ALTER COLUMN "maxAge" SET DEFAULT 99,
+ALTER COLUMN "minAge" SET DEFAULT 0;

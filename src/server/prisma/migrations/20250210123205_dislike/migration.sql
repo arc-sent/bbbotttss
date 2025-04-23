@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "UserBot" ADD COLUMN     "dislike" INTEGER NOT NULL DEFAULT 0;

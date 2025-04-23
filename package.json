@@ -1,0 +1,44 @@
+{
+  "name": "test-bot3",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "bot": "ts-node-dev src/bot/index.ts --respawn --transpile-only --exit-child",
+    "build": "[ -d build ] && rm -rf build; npx tsc && npm run copy-prisma",
+    "server": "ts-node-dev src/server/server.ts --respawn --transpile-only --exit-child",
+    "lint": "tslint -c tslint.json src/**/*.ts",
+    "server:docker": "node build/server/server.js",
+    "bot:docker": "rimraf build/server && node build/bot/index.js",
+    "copy-prisma": "cp -r src/server/prisma build/server/prisma"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.3.0",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "ioredis": "^5.5.0",
+    "node-cron": "^3.0.3",
+    "prisma": "^6.3.0",
+    "telegraf": "^4.16.3",
+    "ts-node-dev": "^2.0.0",
+    "tslint": "^5.20.1",
+    "typescript": "^5.7.3",
+    "zod": "^3.24.1"
+  },
+  "description": "",
+  "files": [
+    "./bin/*",
+    "./lib/*"
+  ],
+  "typings": "./lib/index.d.ts",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/ioredis": "^4.28.10",
+    "@types/node-cron": "^3.0.11",
+    "rimraf": "^6.0.1"
+  }
+}

@@ -11,7 +11,7 @@ COPY . .
 
 RUN npm run build
 
-RUN npx prisma generate
+RUN npx prisma generate --schema=src/server/prisma/schema.prisma
 
 CMD ["sh", "-c", "cd src/server && npx prisma migrate deploy && npm run server:docker"]
 

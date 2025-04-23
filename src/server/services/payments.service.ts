@@ -1,4 +1,4 @@
-import { PrismaClient, PaymentType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 interface Body {
     amountStar: number,
@@ -19,7 +19,7 @@ export class PaymentsService {
                 data: {
                     amountStar: body.amountStar,
                     userId: id,
-                    type: body.type as PaymentType
+                    type: body.type as any
                 }
             });
 

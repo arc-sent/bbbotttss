@@ -443,7 +443,7 @@ ${profile.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${profile.na
             ctx.session.keyboard = false
         }
 
-        const bottomStats = [];
+        const bottomStats: string[] = [];
 
         if (message.likeWieved) {
             bottomStats.push(`❤️ <b>Лайков:</b> ${formatNumberLike}`);

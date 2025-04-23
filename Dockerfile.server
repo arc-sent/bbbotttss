@@ -11,6 +11,8 @@ COPY . .
 
 RUN npm run build
 
+RUN npx prisma generate
+
 CMD ["sh", "-c", "cd src/server && npx prisma migrate deploy && npm run server:docker"]
 
 # CMD ["npm" , "run" , "server:docker"]

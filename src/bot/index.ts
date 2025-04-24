@@ -491,38 +491,38 @@ bot.command('testlocation', async (ctx: any) => {
   return ctx.scene.enter('locationScene')
 });
 
-// if (process.env.NODE_ENV === 'production') {
-//   const urlNgrok = process.env.URLN
-//   const webhookPath = `${urlNgrok}/webhook`;
+if (process.env.NODE_ENV === 'production') {
+  const urlNgrok = process.env.URLN
+  const webhookPath = `${urlNgrok}/webhook`;
 
-//   console.log('worrrk')
+  console.log('worrrk')
 
-//   bot.telegram.setWebhook(webhookPath).then(() => {
-//     console.log("Webhook set to:", webhookPath);
-//   }).then(() => {
-//     console.log('Bot started!')
-//   })
-//     .catch((err) => {
-//       console.log('Bot start with error!', err);
-//     });
-// } else {
-//   bot.launch()
-//     .then(() => {
-//       console.log('Bot started!')
-//     })
-//     .catch((err) => {
-//       console.log('Bot start with error!', err);
-//     })
-
-// }
-
-bot.launch()
-  .then(() => {
+  bot.telegram.setWebhook(webhookPath).then(() => {
+    console.log("Webhook set to:", webhookPath);
+  }).then(() => {
     console.log('Bot started!')
   })
-  .catch((err) => {
-    console.log('Bot start with error!', err);
-  })
+    .catch((err) => {
+      console.log('Bot start with error!', err);
+    });
+} else {
+  bot.launch()
+    .then(() => {
+      console.log('Bot started!')
+    })
+    .catch((err) => {
+      console.log('Bot start with error!', err);
+    })
+
+}
+
+// bot.launch()
+//   .then(() => {
+//     console.log('Bot started!')
+//   })
+//   .catch((err) => {
+//     console.log('Bot start with error!', err);
+//   })
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));

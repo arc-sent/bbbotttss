@@ -25,7 +25,8 @@ export interface UserPATH {
     city?: string,
     age?: number,
     ageMinMax: MaxMin,
-    viewed: string[]
+    viewed: string[],
+    photoMiniApp?: string
 }
 
 interface MaxMin {

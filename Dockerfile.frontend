@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /app/frontend/my-app
+
+COPY src/frontend/my-app/package*.json ./
+
+RUN npm install
+RUN npm install framer-motion @ant-design/icons antd react-swipeable
+RUN npm install --save-dev @types/node
+
+COPY src/frontend/my-app/ ./
+
+RUN npm run build
+
+CMD ["npx", "vite", "preview"]

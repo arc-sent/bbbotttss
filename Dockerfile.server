@@ -9,6 +9,8 @@ RUN npm install typescript
 
 COPY . .
 
+RUN rm -rf src/frontend
+
 RUN npm run build
 
 RUN npx prisma generate --schema=src/server/prisma/schema.prisma

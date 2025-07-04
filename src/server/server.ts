@@ -14,6 +14,8 @@ import { AdvertisementRouter } from './router/advertisement.router';
 import { deleteChanelsInSearch } from './services/check.service';
 import { PrismaClient } from '@prisma/client';
 import bot from '../bot';
+import cors from 'cors';
+import { RedisRouter } from './router/search.redis.router';
 
 dotenv.config();
 
@@ -25,6 +27,12 @@ const main = async () => {
   const app = express();
 
   app.use(express.json());
+  // app.use(cors({
+  //   origin: 'http://localhost:5173',
+  //   credentials: true,
+  // }));
+
+  app.use(cors());
 
   app.get('/', (req, res) => {
     res.status(200).json({ message: 'sucsesful get request' })
@@ -42,47 +50,13 @@ const main = async () => {
   app.use('/payments', PaymentsRouter);
   app.use('/chanels', ChanelsRouter);
   app.use('/advertisement', AdvertisementRouter);
+  app.use('/redisSearch' , RedisRouter);
 
-  // app.get('/top', async (req, res) => {
-  //   try {
-  //     const topUsers = await prisma.userBot.findMany({
-  //       where: {
-  //         top: {
-  //           gte: 1,
-  //           lte: 20,
-  //         },
-  //       },
-  //       orderBy: {
-  //         top: 'asc',
-  //       },
-  //       take: 20,
-  //       select: {
-  //         id: true,
-  //       },
-  //     });
 
-  //     if (!topUsers) {
-  //       throw new Error('Ошибка в получении топа юзера!');
-  //     }
-
-  //     const topUserEdit = topUsers.map(item => {
-  //       return item.id
-  //     })
-
-  //     res.status(200).json({ message: topUserEdit })
-  //   } catch (err) {
-  //     if (err instanceof Error) {
-  //       res.status(400).json({ message: err.message });
-  //     }
-
-  //     res.status(400).json({ message: 'Неизвестная ошибка!' })
-  //   }
-  // })
-
-  // app.post('/test', async (req, res) => {
-  //   const resultDeleteChanelsInSearch = await updateTop();
-  //   res.status(200).json({ message: resultDeleteChanelsInSearch.message })
-  // })
+  app.post('/test', async (req, res) => {
+    const resultDeleteChanelsInSearch = await updateTop();
+    res.status(200).json({ message: resultDeleteChanelsInSearch.message })
+  })
 
 
   cron.schedule('0 0 * * *', async () => {

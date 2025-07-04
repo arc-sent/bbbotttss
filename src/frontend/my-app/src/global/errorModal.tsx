@@ -1,0 +1,51 @@
+import { Modal } from "./modal";
+import { titleClasses, textClasses, borderClasses } from "./handle";
+
+type ErrorProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    text: string
+}
+
+const IconExclamation = () => {
+    return (
+        <svg
+            className="w-[98px] h-[98px]"
+            width="75"
+            height="75"
+            viewBox="0 0 75 75"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M30.4688 48.0774C30.5119 49.6027 31.1481 51.051 32.2423 52.1147C33.3364 53.1783 34.8022 53.7733 36.3281 53.7733C37.854 53.7733 39.3198 53.1783 40.414 52.1147C41.5081 51.051 42.1444 49.6027 42.1875 48.0774V10.5164C42.1444 8.9911 41.5081 7.54273 40.414 6.4791C39.3198 5.41547 37.854 4.82043 36.3281 4.82043C34.8022 4.82043 33.3364 5.41547 32.2423 6.4791C31.1481 7.54273 30.5119 8.9911 30.4688 10.5164V48.0774ZM30.4688 64.4531C30.4688 67.6758 33.1055 70.3125 36.3281 70.3125C39.5508 70.3125 42.1875 67.6758 42.1875 64.4531C42.1875 61.2305 39.5508 58.5938 36.3281 58.5938C34.776 58.5999 33.2892 59.2192 32.1917 60.3167C31.0942 61.4143 30.4749 62.901 30.4688 64.4531Z" fill="#BE8788" />
+        </svg>
+
+    )
+}
+
+export const ModalError = ({ isOpen, onClose, text }: ErrorProps) => {
+    return (
+        <Modal isOpen={isOpen} type={"third"}>
+            <div className={`${titleClasses["third"]} w-[270px]`}>
+                <div className={`${titleClasses["third"]} flex flex-col justify-center items-center text-center`}>
+                    <IconExclamation />
+                    <h1 className={`text-2xl font-bold ${titleClasses["third"]}`} >Внимание</h1>
+                    <p
+                        className={`text-[12px] ${textClasses["third"]}`}
+                        dangerouslySetInnerHTML={{
+                            __html: text
+                                .split('\n')
+                                .map((line: any) => `<span style="display:block; margin-bottom:4px;">${line}</span>`)
+                                .join('')
+                        }}
+                    />
+
+
+                    <button onClick={onClose} className={`${borderClasses["third"]} ${titleClasses["third"]} text-[16px] font-montserrat font-bold cursor-pointer transition-all duration-500 ease-out hover:border-[#5170DE] hover:text-[#5170DE]`}>
+                        Закрыть
+                    </button>
+                </div>
+            </div>
+
+        </Modal>
+    )
+}

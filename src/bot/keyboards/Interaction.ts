@@ -97,6 +97,12 @@ export const buttonEditDelete = {
             ],
             [
                 {
+                    text: '🚀 Мини‑приложение',
+                    callback_data: 'mini_app'
+                }
+            ],
+            [
+                {
                     text: '⛔️ Выключить анкету',
                     callback_data: 'unplug'
                 }

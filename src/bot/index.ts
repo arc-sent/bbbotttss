@@ -2,7 +2,7 @@ import cron from 'node-cron';
 import { CHANNELS, MyContext } from "./interfaces/state";
 import { Scenes, Telegraf, session, Context } from "telegraf";
 import dotenv from 'dotenv';
-import { profileScene, editScene, editName, editDescription, editPhoto, refreshScene, editAge, editCity, editMinMax, premiumSceneProfile, editStatistics, caseScene, referalScene, shopScene, gemsShop, editGender, editGenderSearch, sendGems, sendGemsCustom } from './handlers/profile/get';
+import { profileScene, editScene, editName, editDescription, editPhoto, refreshScene, editAge, editCity, editMinMax, premiumSceneProfile, editStatistics, caseScene, referalScene, shopScene, gemsShop, editGender, editGenderSearch, sendGems, sendGemsCustom, editPhotoInAnket, miniAppScene } from './handlers/profile/get';
 import { ancetReport, ancetScene, ancetSceneGems, ancetSceneMessage } from './handlers/search/getAnket';
 import { getLikes } from "./handlers/likes/getLikes";
 import { getMetch } from "./handlers/metch/get";
@@ -137,6 +137,8 @@ stage.register(locationScene);
 stage.register(ancetSceneGems);
 stage.register(sendGems);
 stage.register(sendGemsCustom);
+stage.register(editPhotoInAnket);
+stage.register(miniAppScene);
 
 const updateMessage = async (ctx: any) => {
   if (ctx.session.sendMessage) {
@@ -219,6 +221,15 @@ bot.use(async (ctx, next) => {
 bot.command('editname', (ctx: any) => {
   ctx.scene.enter('testScene');
 });
+
+bot.on('photo', (ctx) => {
+  const photo = ctx.message?.photo;
+
+  console.log(photo[0].file_id);
+  const fileId = photo[0].file_id;
+
+  ctx.reply(JSON.stringify(fileId));
+})
 
 bot.command('start', async (ctx) => {
   const referralCode = ctx.message.text.split(' ')[1];

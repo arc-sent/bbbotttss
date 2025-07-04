@@ -39,7 +39,7 @@ export class UserService {
                     description: description,
                     photo: photo,
                     city: city,
-                    age: age
+                    age: age,
                 }
             })
 
@@ -180,6 +180,12 @@ export class UserService {
                     where: { id: id }, data: {
                         minAge: body.ageMinMax.minAge,
                         maxAge: body.ageMinMax.maxAge
+                    }
+                })
+            } else if (body.photoMiniApp) {
+                updateUser = await this.prisma.userBot.update({
+                    where: { id: id }, data: {
+                        photoMiniApp: body.photoMiniApp
                     }
                 })
             } else {

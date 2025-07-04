@@ -53,25 +53,9 @@ export const profileScene = new Scenes.WizardScene<MyContext>('profileScene', as
         dislikeWieved: user.dislikeWieved ? '1' : '0',
         coinWieved: user.coinWieved ? '1' : '0',
         premium: user.premium ? '1' : '0',
-        role: user.role
+        role: user.role,
+        photoMiniApp: user.photoMiniApp
     });
-
-    // if (Object.keys(userData1).length === 0) {
-    //     await redis.hset(`user-${ctx.from.id}`, {
-    //         name: user.name,
-    //         description: user.description,
-    //         photo: user.photo,
-    //         city: user.city,
-    //         age: user.age.toString(),
-    //         minAge: user.minAge.toString(),
-    //         maxAge: user.maxAge.toString(),
-    //         likeWieved: user.likeWieved ? '1' : '0',
-    //         dislikeWieved: user.dislikeWieved ? '1' : '0',
-    //         coinWieved: user.coinWieved ? '1' : '0',
-    //         premium: user.premium ? '1' : '0',
-    //         role: user.role
-    //     });
-    // }
 
     const interactions = await redis.hgetall(`user-interactions-${ctx.from.id}`);
 
@@ -203,12 +187,103 @@ ${user.searchGender ? '👱🏻‍♀️' : '👱🏻'} <b>Пол поиска:<
                 }
 
                 return ctx.scene.leave();
+            case 'mini_app':
+                return ctx.scene.enter('miniAppScene');
             default:
                 await ctx.reply('⚠️ Используйте кнопки!');
                 return;
         }
     }
 })
+
+
+export const miniAppScene = new Scenes.WizardScene<MyContext>('miniAppScene', async (ctx) => {
+    if (!ctx.callbackQuery) {
+        if (ctx.message !== undefined) {
+            if ('text' in ctx.message) {
+                await handleCommand1(ctx);
+            }
+        }
+    }
+
+    const result = await editMessageFromGetAnket(ctx);
+
+    if (!result) {
+        console.log('Ошибка в исправлении сообщения!');
+    }
+
+    const userData = await redis.hget(`user-${ctx.from?.id}`, "photoMiniApp");
+
+    if (userData) {
+        await ctx.sendDocument(userData || '', {
+            caption: '📸 Здесь вы можете изменить фотографию анкеты в мини-приложении или открыть его.',
+            parse_mode: "HTML",
+            reply_markup: {
+                inline_keyboard: [
+                    [
+                        {
+                            text: '📝 Обновить фото в мини-приложении',
+                            callback_data: 'edit-mini-app'
+                        }
+                    ],
+                    [
+                        {
+                            text: '🚀 Открыть мини-приложение',
+                            web_app: {
+                                url: "https://a2ba-31-131-74-62.ngrok-free.app"
+                            }
+
+                        }
+                    ]
+                ]
+            }
+        }).then((sendMessage) => {
+            ctx.session.sendMessage = sendMessage.message_id;
+        });
+    } else {
+        await ctx.reply(
+            "📷 Чтобы воспользоваться мини-приложением, добавьте фотографию в анкету с помощью кнопки ниже.",
+            {
+                reply_markup: {
+                    inline_keyboard: [
+                        [
+                            {
+                                text: '📝 Добавить фото в мини-приложении',
+                                callback_data: 'edit-mini-app'
+                            }
+                        ]
+                    ]
+                }
+            }
+        ).then((sendMessage) => {
+            ctx.session.sendMessage = sendMessage.message_id;
+        });
+    }
+
+
+
+    return ctx.wizard.next()
+}, async (ctx) => {
+    if (!ctx.callbackQuery) {
+        if (ctx.message !== undefined) {
+            if ('text' in ctx.message) {
+                await handleCommand1(ctx);
+            }
+        }
+        return
+    }
+
+    if ("data" in ctx.callbackQuery) {
+        const dataCalback = ctx.callbackQuery.data;
+
+        const result = await editMessageFromGetAnket(ctx);
+
+        if (dataCalback === 'edit-mini-app') {
+            return ctx.scene.enter('editPhotoInAnket');
+        }
+    }
+});
+
 
 
 export const editScene = new Scenes.WizardScene<MyContext>('editScene', async (ctx) => {
@@ -568,6 +643,65 @@ export const editPhoto = new Scenes.WizardScene<MyContext>('editPhoto', async (c
         } else if (ctx.callbackQuery.data === 'again') {
             ctx.scene.enter('editPhoto')
             return ctx.scene.leave()
+        }
+    }
+});
+
+export const editPhotoInAnket = new Scenes.WizardScene<MyContext>('editPhotoInAnket', async (ctx) => {
+    await ctx.reply('Пожалуйста, отправьте фотографию как файл:\n— на мобильном: нажмите «📎» → «Файл» → выберите фото из галереи;\n— на компьютере: отправьте фотографию без сжатия.\nЭто поможет сохранить лучшее качество изображения для вашего профиля.');
+
+    return ctx.wizard.next();
+}, async (ctx) => {
+    if (!ctx.callbackQuery) {
+        if (ctx.message !== undefined) {
+            if ('text' in ctx.message) {
+                await handleCommand1(ctx);
+            }
+
+            if ('document' in ctx.message) {
+                const document = ctx.message.document;
+
+                const type_file = document.mime_type
+
+                if (type_file !== 'image/jpeg') {
+                    await ctx.reply('Пожалуйста, отправьте файл с расширением .png или .jpeg');
+
+                    return
+                }
+
+                await redis.hset(`user-${ctx.from?.id}`, "photoMiniApp", document.file_id);
+
+                const editProfileMessage = 'Все верно?'
+                await ctx.sendDocument(document.file_id || '', {
+                    caption: editProfileMessage,
+                    parse_mode: "HTML",
+                    ...buttonSaveAgain
+                }).then((sendMessage) => {
+                    ctx.session.sendMessage = sendMessage.message_id;
+                });
+
+                return ctx.wizard.next();
+            }
+        }
+        return
+    }
+}, async (ctx) => {
+    if (ctx.callbackQuery === undefined) {
+        ctx.reply('⚠️ Используйте кнопки');
+        return
+    }
+
+    if ('data' in ctx.callbackQuery) {
+        const result = await editMessageFromGetAnket(ctx);
+
+        if (!result) {
+            console.log('Ошибка в исправлении сообщения!');
+        }
+
+        if (ctx.callbackQuery.data === 'again') {
+            return ctx.scene.enter('editPhotoInAnket');
+        } else if (ctx.callbackQuery.data === 'save') {
+            SaveEdit(ctx, "photoMiniApp");
         }
     }
 })
@@ -1668,7 +1802,6 @@ const SaveEdit = async (ctx: MyContext, inputName: string) => {
         if (req.status === 400) {
             throw new Error(JSON.stringify(req.data) + req.status)
         }
-
 
         await ctx.scene.enter('profileScene');
     } catch (err) {

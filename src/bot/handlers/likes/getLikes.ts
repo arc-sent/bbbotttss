@@ -170,8 +170,9 @@ ${findUser.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${findUser.
                     throw new Error(`${JSON.stringify(req.data.message)}`);
                 }
 
-                const pending = await deletePending(body.fromId, ctx.session.anket.idPrisma);
+                const pending = await deletePending(ctx.session.anket.idPrisma);
                 console.log(pending)
+                
                 if (!pending) {
                     throw new Error('Ошибка в удалении юзера из массива ожидания');
                 }
@@ -194,7 +195,7 @@ ${findUser.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${findUser.
             }
         } else if (ctx.callbackQuery.data === "dislike") {
             try {
-                const pending = await deletePending(`${ctx.from?.id}`, ctx.session.anket.idPrisma);
+                const pending = await deletePending(ctx.session.anket.idPrisma);
                 console.log(pending)
                 if (!pending) {
                     throw new Error('Ошибка в удалении юзера из массива ожидания');
@@ -219,7 +220,7 @@ ${findUser.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${findUser.
     }
 })
 
-const deletePending = async (userId: string, penId: string) => {
+const deletePending = async (penId: string) => {
     try {
         const urlDelete = `${process.env.URL}/likes/pending/${penId}`;
 

@@ -58,6 +58,7 @@ model UserBot {
   payments Payments[]
   shutdown Boolean @default(false)
   viewed ViewedProfile[]
+  photoMiniApp String @default("")
 }
 
 model Payments {

@@ -35,6 +35,20 @@ services:
       - db
       - redis
     restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend-container
+    env_file:
+      - .env
+    ports:
+      - "4173:4173"
+    depends_on:
+      - db
+      - redis
+    restart: always
 volumes:
   db-data:
   redis-data:

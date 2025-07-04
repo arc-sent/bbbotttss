@@ -22,7 +22,6 @@ export class MatchService {
             const viewedIdsRedis = await redis.lrange(`viewed-${id}`, 0, -1);
 
             const parsedIds = viewedIdsRedis.map(item => JSON.parse(item));
-            console.log(parsedIds);
 
             const parseViewed = parsedIds.filter(item => {
                 if (item.premium && item.count < 5) {
@@ -31,8 +30,6 @@ export class MatchService {
 
                 return item
             })
-
-            console.log("parseViewed", parseViewed);
 
             const findUser = await this.prisma.userBot.findFirst({ where: { id: id } });
 
@@ -49,8 +46,6 @@ export class MatchService {
 
             const searchGender = findUser.searchGender;
 
-            console.log(findUser);
-
             const viewedIdsId = parseViewed.map(item => {
                 return item.id
             });
@@ -63,63 +58,7 @@ export class MatchService {
                 return item.viewedId
             })
 
-            console.log('findViewedProfile', findviewedIdsId);
-
             const viewedIds = `{${[...viewedIdsId, ...findviewedIdsId, id].map((v) => `"${v}"`).join(",")}}`;
-
-            console.log("viewedIds:", viewedIds);
-
-            //             const profiles: ProfileIdsResult = await this.prisma.$queryRaw`
-            // SELECT ARRAY_AGG(subquery.id) AS idProfiles
-            // FROM (
-            //     (
-            //       SELECT id, 
-            //              ST_Distance(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)) AS distance
-            //       FROM "UserBot"
-            //       WHERE 
-            //           ST_DWithin(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326), 50000)
-            //           AND age BETWEEN ${minAge} AND ${maxAge}
-            //           AND gender = ${searchGender}
-            //           AND id != ALL (${viewedIds}::text[])
-            //           AND shutdown = false
-            //     )
-            //     UNION ALL
-            //     (
-            //       SELECT id, 
-            //              ST_Distance(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)) AS distance
-            //       FROM "UserBot"
-            //       WHERE 
-            //           ST_DWithin(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326), 100000)
-            //           AND age BETWEEN ${minAge} AND ${maxAge}
-            //           AND gender = ${searchGender}
-            //           AND id != ALL (${viewedIds}::text[]) 
-            //           AND shutdown = false
-            //           AND id NOT IN (
-            //               SELECT id FROM "UserBot"
-            //               WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326), 50000) 
-            //           )
-            //     )
-            //     UNION ALL
-            //     (
-            //       SELECT id, 
-            //              ST_Distance(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326)) AS distance
-            //       FROM "UserBot"
-            //       WHERE 
-            //           ST_DWithin(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326), 200000)
-            //           AND age BETWEEN ${minAge} AND ${maxAge}
-            //           AND gender = ${searchGender}
-            //           AND id != ALL (${viewedIds}::text[]) 
-            //           AND shutdown = false
-            //           AND id NOT IN (
-            //               SELECT id FROM "UserBot"
-            //               WHERE ST_DWithin(location, ST_SetSRID(ST_MakePoint(${lon}, ${lat}), 4326), 100000) 
-            //           )
-            //     )
-            //     ORDER BY distance
-            //     LIMIT 20
-            // ) AS subquery;
-            // `;
-
 
             const userGender = findUser.gender;
 
@@ -176,10 +115,6 @@ FROM (
     LIMIT 20
 ) AS subquery;
 `;
-
-            console.log("profiles")
-            console.log(profiles);
-            console.log("profiles[0].idprofiles == null", profiles[0].idprofiles == null)
             if (profiles[0].idprofiles == null) {
                 return { message: 'Нет подходящих анкет', status: 201 };
             }
@@ -254,11 +189,15 @@ FROM (
                     console.log(addPendingProfile)
                 }
 
-                await axios.post(`https://api.telegram.org/bot${process.env.TELEG_TOKEN}/sendMessage`, {
+                const result =  await axios.post(`https://api.telegram.org/bot${process.env.TELEG_TOKEN}/sendMessage`, {
                     chat_id: id,
                     text: `<b>🔥 Кто-то заинтересовался вашей анкетой!</b>\n\nПерейдите в меню <b>"❤️ Лайки"</b>, чтобы увидеть, кто проявил интерес к вашей анкете!`,
                     parse_mode: "HTML"
-                })
+                } , {
+                    validateStatus: () => true
+                });
+
+                console.log(result);
 
                 return { message: 'Пользователь обновлен', status: 200 }
             }

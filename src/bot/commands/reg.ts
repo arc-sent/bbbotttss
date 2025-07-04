@@ -96,7 +96,6 @@ export const regScene = new Scenes.WizardScene<MyContext>('regScene', async (ctx
             case 'woman':
                 ctx.session.gender = true
 
-
                 await ctx.reply('Теперь введите описание профиля');
 
                 return ctx.wizard.next();

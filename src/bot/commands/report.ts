@@ -39,6 +39,8 @@ export const ReportScene = new Scenes.WizardScene<MyContext>('reportScene', asyn
         console.log('Выполненно 1');
         console.log('interactions', interactions);
 
+
+        
         if (interactions.role !== 'admin') {
             await ctx.reply('⛔ У вас недостаточно прав для выполнения этого действия.');
             return ctx.scene.leave();

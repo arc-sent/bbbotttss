@@ -501,4 +501,52 @@ export class UserController {
             }
         }
     }
+
+    async GETPHOTO(req: Request, res: Response) {
+        try {
+            const id = req.params.id;
+
+            if (!id) {
+                throw new Error("Ошибка в получении айди юзера");
+            }
+
+            const resTg = await axios.get(
+                `https://api.telegram.org/bot${process.env.TELEG_TOKEN}/getUserProfilePhotos`,
+                {
+                    params: {
+                        user_id: id,
+                        limit: 1
+                    },
+                    validateStatus: () => true
+                }
+            );
+
+            if (!resTg.data.ok) {
+                throw new Error(`Telegram API error: ${resTg.data.description}`);
+            }
+
+            const photos = resTg.data.result.photos;
+            const fileId = photos[0][0].file_id
+
+            const resUrl = await axios.get(
+                `https://api.telegram.org/bot${process.env.TELEG_TOKEN}/getFile?file_id=${fileId}`,
+                { validateStatus: () => true }
+            );
+
+            if (!resUrl.data.ok) {
+                throw new Error(`Ошибка Telegram API: ${resUrl.data.description}`);
+            }
+
+            console.log("resUrl", resUrl.data)
+            const filePath = resUrl.data.result.file_path;
+
+            res.status(200).json({ message: filePath });
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(400).json({ message: err.message })
+            } else {
+                res.status(400).json({ message: `Invalid err: ${err}` })
+            }
+        }
+    }
 }

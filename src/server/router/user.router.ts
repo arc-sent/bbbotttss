@@ -67,7 +67,11 @@ router.put('/:id/gender/search', (req, res) => {
     controller.EDITGENDER(req, res);
 })
 
-router.get('/' , (req , res) => {
-    controller.MANYGET(req , res);
+router.get('/', (req, res) => {
+    controller.MANYGET(req, res);
+})
+
+router.get('/:id/photo', (req, res) => {
+    controller.GETPHOTO(req, res);
 })
 export const UserRouter = router;

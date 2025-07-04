@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    font-family: "Montserrat", sans-serif;
+}
+
+.custom-border {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #9374AB;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.custom-border-first {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #87BEB5;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.custom-border-second {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #8792BE;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.custom-border-third {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #BE8788;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.custom-border-fourth {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #BCBE87;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.custom-border-mystery {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #5170DE;
+    border-radius: 7px;
+    padding: 2px 8px;
+}
+
+.line-default {
+    background: radial-gradient(ellipse at center, #2D2A46 44%, #0D0D18 75%);
+}
+
+.line-first {
+    background: radial-gradient(ellipse at center, #2A4643 44%, #0D0D18 75%);
+}
+
+.line-second {
+    background: radial-gradient(ellipse at center, #757ea3 44%, #0D0D18 75%);
+}
+
+.line-third {
+    background: radial-gradient(ellipse at center, #BE8788 44%, #0D0D18 75%);
+}
+
+.line-fourth {
+    background: radial-gradient(ellipse at center, #A0A26E 44%, #0D0D18 75%);
+}

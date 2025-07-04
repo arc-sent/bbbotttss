@@ -12,8 +12,6 @@ const testFucntion = async (ctx: MyContext) => {
         const url = process.env.URL;
         const manyAncket = await redis.llen(`user-search-${ctx.from?.id}`);
 
-        console.log(manyAncket)
-
         if (Number(manyAncket) !== 0) {
             return true
         }
@@ -50,46 +48,6 @@ const testFucntion = async (ctx: MyContext) => {
         return false
     }
 }
-
-// const editMessage = async (ctx: MyContext) => {
-
-//     const profile = await redis.hgetall(`anket-${ctx.from?.id}`);
-
-//     const iconsTop = getTopIcon(Number(profile.top));
-//     const formatNumberCoin = formatNumber(Number(profile.coin));
-//     const formatNumberLike = formatNumber(Number(profile.like));
-//     const formatNumberDislike = formatNumber(Number(profile.dislike));
-
-//     const newProfileMessage = `  
-// <b>${profile.premium ? '⭐ PREMIUM ⭐' : '💘 Анкета пользователя'}</b>
-// ${iconsTop} <b>Место в топе:</b> ${profile.top}
-// ———————————————  
-// 👤 <b>Имя:</b> ${profile.name}  
-// 🎂 <b>Возраст:</b> ${profile.age}  
-// 📍 <b>Город:</b> ${profile.city}  
-// 📖 <b>Описание:</b> ${profile.description}  
-// ———————————————  
-// ❤️ <b>Лайков:</b> ${formatNumberLike}  
-// 👎 <b>Дизлайков:</b> ${formatNumberDislike}  
-// 💠 <b>Гемы:</b> ${formatNumberCoin}  
-// `;
-
-//     if (ctx.chat === undefined) {
-//         return false
-//     }
-
-//     await ctx.telegram.editMessageCaption(
-//         ctx.chat.id,
-//         ctx.session.sendMessage,
-//         undefined,
-//         newProfileMessage,
-//         {
-//             parse_mode: "HTML"
-//         }
-//     );
-
-//     return true;
-// }
 
 export const editMessage = async (ctx: any) => {
     try {
@@ -143,6 +101,17 @@ export const editMessageOnlyText = async (ctx: any, text: string, markup: any) =
         console.error(err);
         return false
     }
+}
+
+export const deleteMssage = async (ctx: any) => {
+    try {
+        await ctx.telegram.deleteMessage(ctx.chat.id, ctx.session.sendMessage);
+        return true;
+    } catch (err) {
+        console.error('Ошибка при удалении сообщения:', err);
+        return false;
+    }
+
 }
 
 export const ancetScene = new Scenes.WizardScene<MyContext>('ancetScene', async (ctx) => {
@@ -631,9 +600,10 @@ ${bottomStats.length ? '———————————————\n' + botto
                     return ctx.scene.leave();
                 }
 
-
                 const message = await redis.hget(`user-interactions-${ctx.from?.id}`, 'message');
                 const messageMax = await redis.hget(`user-interactions-${ctx.from?.id}`, 'messageMax');
+
+                console.log("message" , message , "messageMax" , messageMax);
 
                 if (messageMax == null || message == null) {
                     return
@@ -646,11 +616,9 @@ ${bottomStats.length ? '———————————————\n' + botto
                     await redis.hincrby(`user-interactions-${ctx.from?.id}`, 'message', 1);
                 }
 
-                ctx.scene.enter('ancetSceneMessage');
-                break
+                return ctx.scene.enter('ancetSceneMessage');
             case 'coins':
-                await ctx.scene.enter('ancetSceneGems');
-                break
+                return ctx.scene.enter('ancetSceneGems');
             case 'cancel':
                 const result = await editMessage(ctx);
 
@@ -659,10 +627,8 @@ ${bottomStats.length ? '———————————————\n' + botto
                 if (!result) {
                     throw new Error('Ошибка в исправлении сообщения!');
                 }
-                await ctx.scene.enter('ancetScene');
-                break
+                return ctx.scene.enter('ancetScene');
             default:
-
                 await ctx.reply(
                     '⚠️ <b>Вы нажали что-то не то!</b> Попробуйте ещё раз.',
                     { parse_mode: 'HTML' }
@@ -717,11 +683,6 @@ export const ancetReport = new Scenes.WizardScene<MyContext>('ancetReport', asyn
 
 export const ancetSceneMessage = new Scenes.WizardScene<MyContext>('ancetSceneMessage', async (ctx) => {
     const result = await editMessage(ctx);
-
-    if (!result) {
-        await ctx.reply('⚠️ Произошла ошибка! Попробуйте еще раз.');
-        return ctx.scene.enter('ancetScene');
-    }
 
     await ctx.reply(`<b>✉️ Написать</b>\n\nВведите сообщение для анкеты.`, {
         parse_mode: 'HTML',
@@ -1335,7 +1296,6 @@ export async function handleCommandSearch(ctx: any) {
                     );
                     return ctx.scene.leave();
                 }
-
 
                 const message = await redis.hget(`user-interactions-${ctx.from?.id}`, 'message');
                 const messageMax = await redis.hget(`user-interactions-${ctx.from?.id}`, 'messageMax');

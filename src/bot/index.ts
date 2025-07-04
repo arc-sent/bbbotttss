@@ -504,7 +504,7 @@ bot.command('testlocation', async (ctx: any) => {
 
 if (process.env.NODE_ENV === 'production') {
   const urlNgrok = process.env.URLN
-  const webhookPath = `${urlNgrok}/webhook`;
+  const webhookPath = `${urlNgrok}/api/webhook`;
 
   console.log('worrrk')
 

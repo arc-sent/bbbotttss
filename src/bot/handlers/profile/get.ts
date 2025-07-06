@@ -230,7 +230,7 @@ export const miniAppScene = new Scenes.WizardScene<MyContext>('miniAppScene', as
                         {
                             text: '🚀 Открыть мини-приложение',
                             web_app: {
-                                url: "https://a2ba-31-131-74-62.ngrok-free.app"
+                                url: "https://nexycon.duckdns.org"
                             }
 
                         }

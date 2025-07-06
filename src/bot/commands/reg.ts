@@ -180,10 +180,32 @@ export const regScene = new Scenes.WizardScene<MyContext>('regScene', async (ctx
 
         ctx.session.age = message;
 
-        await ctx.reply('Хорошо! Теперь отправьте свое фото');
+        await ctx.reply('Хорошо! Пожалуйста, отправьте фотографию как файл:\n— на мобильном: нажмите «📎» → «Файл» → выберите фото из галереи;\n— на компьютере: отправьте фотографию без сжатия.\nЭто поможет сохранить лучшее качество изображения для вашего профиля.');
 
         return ctx.wizard.next();
 
+    }
+}, async (ctx) => {
+    if (ctx.message === undefined) {
+        ctx.reply('⚠️ Отправьте файл еще раз.');
+        return
+    }
+
+    if ('document' in ctx.message) {
+        const document = ctx.message.document;
+
+        const type_file = document.mime_type
+
+        if (type_file !== 'image/jpeg') {
+            await ctx.reply('Пожалуйста, отправьте файл с расширением .png или .jpeg');
+
+            return
+        }
+
+        ctx.session.document = document;
+
+        await ctx.reply('Отлично! Теперь скиньте фотографию, которая будет использована в вашей анкете.')
+        return ctx.wizard.next();
     }
 }, async (ctx) => {
     if (ctx.message === undefined) {
@@ -207,7 +229,9 @@ ${ctx.session.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${ctx.se
 ——————————————— 
 `;
 
-        ctx.replyWithPhoto(ctx.session.photo || '', {
+        await ctx.sendDocument(ctx.session.document || '')
+
+        await ctx.replyWithPhoto(ctx.session.photo || '', {
             caption: profileMessage,
             parse_mode: "HTML",
             ...buttonSaveAgain
@@ -245,7 +269,8 @@ ${ctx.session.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${ctx.se
                     description: ctx.session.description,
                     age: Number(ctx.session.age),
                     city: ctx.session.city,
-                    gender: ctx.session.gender
+                    gender: ctx.session.gender,
+                    photoMiniApp: ctx.session.document
                 };
 
 

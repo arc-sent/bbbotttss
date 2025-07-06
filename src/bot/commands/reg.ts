@@ -29,8 +29,6 @@ export const regScene = new Scenes.WizardScene<MyContext>('regScene', async (ctx
 
 
     } catch (err) {
-        console.log(err);
-
         await ctx.reply('Как вас зовут?');
 
         return ctx.wizard.next();
@@ -208,6 +206,8 @@ export const regScene = new Scenes.WizardScene<MyContext>('regScene', async (ctx
         return ctx.wizard.next();
     }
 }, async (ctx) => {
+    console.log('in bbot work next step')
+
     if (ctx.message === undefined) {
         ctx.reply('⚠️ Отправьте свою фотку еще раз.');
         return
@@ -248,8 +248,6 @@ ${ctx.session.gender ? '👱🏻‍♀️' : '👱🏻'} <b>Имя:</b> ${ctx.se
     }
 
     const result = await editMessage(ctx);
-
-    console.log('result', result);
 
     if (!result) {
         console.log('Ошибка в исправлении сообщения!');

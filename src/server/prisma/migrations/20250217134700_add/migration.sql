@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "UserBot" ADD COLUMN     "location" GEOGRAPHY(Point, 4326) NOT NULL;
+ALTER TABLE "UserBot" ADD COLUMN  "location" GEOGRAPHY(Point, 4326) NOT NULL;

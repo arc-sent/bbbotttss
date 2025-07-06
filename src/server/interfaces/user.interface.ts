@@ -15,7 +15,8 @@ export interface User {
     maxAge: number,
     lat: number,
     lon: number,
-    gender: boolean
+    gender: boolean,
+    photoMiniApp: string
 }
 
 export interface UserPATH {

@@ -100,7 +100,8 @@ export class UserService {
                     long: Number(body.lon),
                     top: lengthUserTop,
                     gender: body.gender,
-                    searchGender: !body.gender
+                    searchGender: !body.gender,
+                    photoMiniApp: body.photoMiniApp
                 }
             });
             console.log("createUser")
@@ -115,7 +116,6 @@ export class UserService {
             SET location = ST_SetSRID(ST_MakePoint(${createUser.long}, ${createUser.lat}), 4326)
             WHERE "idPrisma" = ${createUser.idPrisma}
           `;
-
 
             return { message: createUser, status: 200 }
         } catch (err) {

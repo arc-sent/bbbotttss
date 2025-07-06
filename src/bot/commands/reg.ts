@@ -200,7 +200,7 @@ export const regScene = new Scenes.WizardScene<MyContext>('regScene', async (ctx
             return
         }
 
-        ctx.session.document = document;
+        ctx.session.document = document.file_id;
 
         await ctx.reply('Отлично! Теперь скиньте фотографию, которая будет использована в вашей анкете.')
         return ctx.wizard.next();

@@ -27,10 +27,10 @@ const main = async () => {
   const app = express();
 
   app.use(express.json());
-  // app.use(cors({
-  //   origin: 'http://localhost:5173',
-  //   credentials: true,
-  // }));
+  app.use(cors({
+    origin: 'https://nexycon.duckdns.org',
+    credentials: true,
+  }));
 
   app.use(cors());
 
@@ -50,7 +50,7 @@ const main = async () => {
   app.use('/payments', PaymentsRouter);
   app.use('/chanels', ChanelsRouter);
   app.use('/advertisement', AdvertisementRouter);
-  app.use('/redisSearch' , RedisRouter);
+  app.use('/redisSearch', RedisRouter);
 
 
   app.post('/test', async (req, res) => {

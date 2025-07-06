@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'a2ba-31-131-74-62.ngrok-free.app'
+      'nexycon.duckdns.org'
     ]
   }
 })
